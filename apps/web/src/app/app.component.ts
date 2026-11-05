@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ControlsComponent } from './controls.component';
 import { PomodoroStore } from './pomodoro.store';
 import { SettingsComponent } from './settings.component';
+import { StatsComponent } from './stats.component';
 import { TimerRingComponent } from './timer-ring.component';
 
 @Component({
   selector: 'app-root',
-  imports: [ControlsComponent, SettingsComponent, TimerRingComponent],
+  imports: [ControlsComponent, SettingsComponent, StatsComponent, TimerRingComponent],
   host: { '[attr.data-phase]': 'store.phase()' },
   template: `
     <main class="layout">
@@ -31,6 +32,18 @@ import { TimerRingComponent } from './timer-ring.component';
       </section>
       <div class="side">
         <app-settings class="card" />
+        <section class="card" aria-labelledby="stats-heading">
+          <h2 id="stats-heading">Last 7 days</h2>
+          @defer (on interaction) {
+            <app-stats />
+          } @placeholder {
+            <button type="button" class="button">Show statistics</button>
+          } @loading (after 100ms; minimum 200ms) {
+            <p class="muted" role="status">Loading…</p>
+          } @error {
+            <p class="muted" role="alert">Statistics could not be loaded.</p>
+          }
+        </section>
       </div>
     </main>
   `,
