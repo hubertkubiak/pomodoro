@@ -23,9 +23,8 @@ circle {
 
 .progress {
   stroke: var(--phase-color);
-  stroke-dasharray: 1;
   transition:
-    stroke-dashoffset 250ms linear,
+    stroke-dasharray 250ms linear,
     stroke 200ms ease;
 }
 

@@ -11,7 +11,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         cy="100"
         r="90"
         pathLength="1"
-        [style.stroke-dashoffset]="1 - progress()"
+        [style.stroke-dasharray]="progress() + ' 1'"
       />
     </svg>
     <div class="label">
