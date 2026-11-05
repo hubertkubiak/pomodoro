@@ -1,0 +1,20 @@
+node_modules/
+dist/
+.angular/
+coverage/
+*.log
+
+# Local SQLite database
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local Claude Code state
+.claude/
