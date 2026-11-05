@@ -20,8 +20,7 @@ RUN npm ci --omit=dev --workspace=apps/api --include-workspace-root=false && npm
 COPY --from=build /app/apps/api/dist apps/api/dist
 RUN mkdir /data && chown node:node /data
 USER node
-VOLUME /data
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s \
-  CMD node -e "fetch('http://127.0.0.1:3000/api/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
+  CMD node -e "fetch('http://127.0.0.1:' + process.env.PORT + '/api/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
 CMD ["node", "apps/api/dist/server.js"]

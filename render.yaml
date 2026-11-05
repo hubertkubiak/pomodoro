@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: pomodoro-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: main
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    # On the free plan a deploy wipes the database, so changes to the web app must not trigger one.
+    buildFilter:
+      paths:
+        - apps/api/**
+        - shared/**
+        - package.json
+        - package-lock.json
+    envVars:
+      - key: CORS_ORIGIN
+        value: https://hubertkubiak.github.io

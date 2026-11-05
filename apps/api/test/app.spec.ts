@@ -138,6 +138,40 @@ describe('API', () => {
     });
   });
 
+  describe('CORS', () => {
+    const allowedOriginFor = async (origin: string) => {
+      const res = await app.inject({ method: 'GET', url: '/api/health', headers: { origin } });
+      return res.headers['access-control-allow-origin'];
+    };
+
+    it('allows only the local web app by default', async () => {
+      expect(await allowedOriginFor('http://localhost:4200')).toBe('http://localhost:4200');
+      expect(await allowedOriginFor('https://evil.example')).toBeUndefined();
+    });
+
+    it('allows the configured origins', async () => {
+      await app.close();
+      app = await buildApp({ dbPath: ':memory:', corsOrigins: ['https://user.github.io'] });
+      expect(await allowedOriginFor('https://user.github.io')).toBe('https://user.github.io');
+      expect(await allowedOriginFor('http://localhost:4200')).toBeUndefined();
+    });
+
+    it('answers the preflight of a JSON POST', async () => {
+      const res = await app.inject({
+        method: 'OPTIONS',
+        url: '/api/sessions',
+        headers: {
+          origin: 'http://localhost:4200',
+          'access-control-request-method': 'POST',
+          'access-control-request-headers': 'content-type',
+        },
+      });
+      expect(res.statusCode).toBe(204);
+      expect(res.headers['access-control-allow-methods']).toContain('POST');
+      expect(res.headers['access-control-allow-headers']).toContain('content-type');
+    });
+  });
+
   it('answers unknown routes in the common error format', async () => {
     const res = await app.inject({ method: 'GET', url: '/api/nope' });
     expect(res.statusCode).toBe(404);

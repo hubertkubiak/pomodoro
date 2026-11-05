@@ -27,11 +27,11 @@
 | Skill | Where it shows in the project |
 | --- | --- |
 | <img src="https://skillicons.dev/icons?i=angular" width="16" alt="" /> **Angular 22, standalone, zoneless** | The whole app, with no zone.js and no NgModule |
-| <img src="https://skillicons.dev/icons?i=ts" width="16" alt="" /> **Signals, `computed`, `effect`** | [Timer store](apps/web/src/app/pomodoro.store.ts), derived time and progress, tab title |
+| <img src="https://skillicons.dev/icons?i=ts" width="16" alt="" /> **Signals, `computed`, `effect`** | [Timer store](apps/web/src/app/core/pomodoro.store.ts), derived time and progress, tab title |
 | <img src="https://skillicons.dev/icons?i=angular" width="16" alt="" /> **State-driven UI** | Explicit timer state machine; the view only reads state |
-| <img src="https://skillicons.dev/icons?i=angular" width="16" alt="" /> **Signal Forms, validators** | [Settings panel](apps/web/src/app/settings.component.ts) with field and cross-field validation |
+| <img src="https://skillicons.dev/icons?i=angular" width="16" alt="" /> **Signal Forms, validators** | [Settings panel](apps/web/src/app/components/settings/settings.component.ts) with [field and cross-field validation](apps/web/src/app/core/settings.schema.ts) |
 | <img src="https://skillicons.dev/icons?i=angular" width="16" alt="" /> **`@defer`, lazy loading** | Stats panel loaded only after interaction |
-| <img src="https://skillicons.dev/icons?i=angular" width="16" alt="" /> **Resource API (`httpResource`)** | [Fetching statistics](apps/web/src/app/stats.component.ts) from the backend |
+| <img src="https://skillicons.dev/icons?i=angular" width="16" alt="" /> **Resource API (`httpResource`)** | [Fetching statistics](apps/web/src/app/components/stats/stats.component.ts) from the backend |
 | <img src="https://skillicons.dev/icons?i=nodejs" width="16" alt="" /> **Node.js, REST API** | [Fastify API](apps/api/src/app.ts) that stores completed sessions in SQLite |
 | <img src="https://skillicons.dev/icons?i=jest" width="16" alt="" /> **Jest** | Store tests with fake timers and API tests with `app.inject()` |
 | <img src="https://skillicons.dev/icons?i=docker" width="16" alt="" /> **Docker** | [Dockerfile](apps/api/Dockerfile) and Compose setup for the API |
@@ -54,7 +54,30 @@ Open <http://localhost:4200>. The command starts the web app and the API (port 3
 | `npm run build` | Builds both projects |
 | `docker compose up --build` | Runs only the API in Docker, with the database in a named volume |
 
-The API reads `PORT` (default `3000`), `HOST` (default `localhost`) and `DB_PATH` (default `apps/api/data/pomodoro.db`).
+The API reads these environment variables:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `PORT` | `3000` | Port to listen on |
+| `HOST` | `localhost` | Address to bind to |
+| `DB_PATH` | `apps/api/data/pomodoro.db` | Path to the SQLite file |
+| `CORS_ORIGIN` | `http://localhost:4200` | Allowed browser origins, separated by commas |
+
+## Deployment
+
+The web app runs on GitHub Pages, which only hosts static files, and the API runs on Render. Do the setup before pushing, because the Pages workflow runs on every push to `main`.
+
+1. **Create the API.** In Render, choose **New > Blueprint** and select this repository. [`render.yaml`](render.yaml) defines the service. Copy its URL when it is ready, e.g. `https://pomodoro-api-xxxx.onrender.com`.
+2. **Point the web app at the API.** In GitHub, go to **Settings > Secrets and variables > Actions > Variables** and add `API_ORIGIN` with that URL.
+3. **Turn on Pages.** In **Settings > Pages**, set the source to **GitHub Actions**.
+4. **Deploy.** Push to `main` or run the [workflow](.github/workflows/deploy-pages.yml) by hand. It runs the tests, builds the app with the right base path and API address, and publishes it.
+
+If you fork the project, also change `CORS_ORIGIN` in `render.yaml` to your own Pages origin.
+
+> [!NOTE]
+> `render.yaml` uses Render's free plan. The service sleeps after 15 minutes without traffic and takes about a minute to wake up, so statistics can show an error until then. Its file system is not persistent, so **the SQLite database is wiped on every sleep, restart and deploy**. To keep the history, use a paid instance with a persistent disk mounted at `/data`.
+>
+> The API has no login: all visitors share the same statistics, and anyone who knows the URL can add sessions.
 
 ## How the timer works
 
@@ -105,13 +128,16 @@ stateDiagram-v2
 ```text
 pomodoro/
 ├── apps/
-│   ├── web/                Angular 22 app
-│   │   └── src/app/        Store, sessions API and components
+│   ├── web/src/app/        Angular 22 app
+│   │   ├── core/           Timer store, settings, validation rules, sessions API
+│   │   └── components/     One folder per component, with .ts, .html and .scss files
 │   └── api/                Fastify API
 │       ├── src/routes/     HTTP and JSON schemas
 │       ├── src/repo/       SQL
 │       └── test/           API tests
 ├── shared/types.ts         DTOs used by both projects
+├── .github/workflows/      Deployment of the web app to GitHub Pages
+├── render.yaml             Deployment of the API to Render
 ├── docker-compose.yml
 └── SPEC.md                 Full specification
 ```

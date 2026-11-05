@@ -5,10 +5,11 @@ import { buildApp } from './app';
 const dbPath = process.env['DB_PATH'] ?? resolve(__dirname, '../data/pomodoro.db');
 const port = Number(process.env['PORT'] ?? 3000);
 const host = process.env['HOST'] ?? 'localhost';
+const corsOrigins = process.env['CORS_ORIGIN']?.split(',').map((origin) => origin.trim());
 
 async function main(): Promise<void> {
   mkdirSync(dirname(dbPath), { recursive: true });
-  const app = await buildApp({ dbPath, logger: true });
+  const app = await buildApp({ dbPath, logger: true, corsOrigins });
 
   for (const signal of ['SIGINT', 'SIGTERM'] as const) {
     process.once(signal, () => void app.close().then(() => process.exit(0)));

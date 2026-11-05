@@ -9,6 +9,8 @@ export interface AppOptions {
   /** Path to the SQLite file, or `:memory:`. */
   dbPath: string;
   logger?: boolean;
+  /** Browser origins allowed to call the API. */
+  corsOrigins?: string[];
   /** Current time, replaceable in tests. */
   now?: () => Date;
 }
@@ -17,13 +19,14 @@ export interface AppOptions {
 export async function buildApp({
   dbPath,
   logger = false,
+  corsOrigins = ['http://localhost:4200'],
   now = () => new Date(),
 }: AppOptions): Promise<FastifyInstance> {
   const app = Fastify({ logger });
   const repo = new SessionsRepo(dbPath);
   app.addHook('onClose', async () => repo.close());
 
-  await app.register(cors, { origin: 'http://localhost:4200' });
+  await app.register(cors, { origin: corsOrigins });
 
   app.setErrorHandler<FastifyError>((error, request, reply) => {
     if (error.validation) {
