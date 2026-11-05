@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ControlsComponent } from './controls.component';
 import { PomodoroStore } from './pomodoro.store';
+import { SettingsComponent } from './settings.component';
 import { TimerRingComponent } from './timer-ring.component';
 
 @Component({
   selector: 'app-root',
-  imports: [ControlsComponent, TimerRingComponent],
+  imports: [ControlsComponent, SettingsComponent, TimerRingComponent],
   host: { '[attr.data-phase]': 'store.phase()' },
   template: `
     <main class="layout">
@@ -28,6 +29,9 @@ import { TimerRingComponent } from './timer-ring.component';
           Completed today: <strong>{{ store.completedFocus() }}</strong>
         </p>
       </section>
+      <div class="side">
+        <app-settings class="card" />
+      </div>
     </main>
   `,
   styleUrl: './app.component.scss',
