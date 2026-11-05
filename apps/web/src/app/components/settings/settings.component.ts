@@ -1,0 +1,45 @@
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { form, FormField, submit } from '@angular/forms/signals';
+import { settingsSchema } from '../../core/settings.schema';
+import { PomodoroSettings, SettingsStore } from '../../core/settings.store';
+
+@Component({
+  selector: 'app-settings',
+  imports: [FormField],
+  templateUrl: './settings.component.html',
+  styleUrl: './settings.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class SettingsComponent {
+  private readonly store = inject(SettingsStore);
+
+  private readonly model = signal<PomodoroSettings>(this.store.settings());
+  private readonly form = form(this.model, settingsSchema);
+
+  protected readonly fields = [
+    { id: 'focus-min', label: 'Focus session (min)', field: this.form.focusMin },
+    { id: 'short-break-min', label: 'Short break (min)', field: this.form.shortBreakMin },
+    { id: 'long-break-min', label: 'Long break (min)', field: this.form.longBreakMin },
+    { id: 'sessions-until-long', label: 'Sessions until long break', field: this.form.sessionsUntilLong },
+  ];
+
+  private readonly isUnchanged = computed(() => {
+    const draft = this.model();
+    const applied = this.store.settings();
+    return (Object.keys(applied) as (keyof PomodoroSettings)[]).every(
+      (key) => draft[key] === applied[key],
+    );
+  });
+  private readonly hasSaved = signal(false);
+
+  protected readonly canSave = computed(() => this.form().valid() && !this.isUnchanged());
+  protected readonly justSaved = computed(() => this.hasSaved() && this.isUnchanged());
+
+  protected save(event: Event): void {
+    event.preventDefault();
+    void submit(this.form, async () => {
+      this.store.update(this.model());
+      this.hasSaved.set(true);
+    });
+  }
+}

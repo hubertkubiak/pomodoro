@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import type { DayStatsDto } from '@pomodoro/shared';
-import { SessionsApi } from './sessions.api';
+import { SessionsApi } from '../../core/sessions.api';
 import { StatsComponent } from './stats.component';
 
 const days: DayStatsDto[] = [

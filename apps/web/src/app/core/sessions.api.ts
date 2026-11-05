@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import type { CreateSessionDto, SessionDto } from '@pomodoro/shared';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 
 export const PENDING_SESSIONS_KEY = 'pomodoro.pendingSessions';
 

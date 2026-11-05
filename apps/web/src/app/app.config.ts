@@ -6,7 +6,7 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { SessionsApi } from './sessions.api';
+import { SessionsApi } from './core/sessions.api';
 
 export const appConfig: ApplicationConfig = {
   providers: [

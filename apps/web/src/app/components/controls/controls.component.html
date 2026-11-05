@@ -1,0 +1,21 @@
+@switch (status()) {
+  @case ('idle') {
+    <button type="button" class="button button--primary" (click)="startTimer.emit()">
+      Start
+    </button>
+  }
+  @case ('running') {
+    <button type="button" class="button button--primary" (click)="pauseTimer.emit()">
+      Pause
+    </button>
+  }
+  @case ('paused') {
+    <button type="button" class="button button--primary" (click)="resumeTimer.emit()">
+      Resume
+    </button>
+  }
+}
+@if (status() !== 'idle') {
+  <button type="button" class="button" (click)="resetTimer.emit()">Reset</button>
+}
+<button type="button" class="button" (click)="skipPhase.emit()">Skip</button>

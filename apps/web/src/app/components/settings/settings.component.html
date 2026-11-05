@@ -1,0 +1,29 @@
+<h2>Settings</h2>
+<form novalidate (submit)="save($event)">
+  <div class="fields">
+    @for (item of fields; track item.id) {
+      <div class="field">
+        <label [for]="item.id">{{ item.label }}</label>
+        <input
+          type="number"
+          inputmode="numeric"
+          [id]="item.id"
+          [formField]="item.field"
+          [attr.aria-invalid]="item.field().invalid()"
+          [attr.aria-describedby]="item.id + '-error'"
+        />
+        <p class="error" [id]="item.id + '-error'">
+          @for (error of item.field().errors(); track error.kind) {
+            <span>{{ error.message }}</span>
+          }
+        </p>
+      </div>
+    }
+  </div>
+  <div class="actions">
+    <button type="submit" class="button" [disabled]="!canSave()">Save</button>
+    <p class="hint" role="status">
+      {{ justSaved() ? 'Saved.' : 'Changes apply from the next phase.' }}
+    </p>
+  </div>
+</form>

@@ -1,7 +1,7 @@
 import { EnvironmentInjector, runInInjectionContext, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { form } from '@angular/forms/signals';
-import { settingsSchema } from './settings.component';
+import { settingsSchema } from './settings.schema';
 import {
   DEFAULT_SETTINGS,
   PomodoroSettings,

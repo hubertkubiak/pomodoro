@@ -8,53 +8,14 @@ import {
   untracked,
 } from '@angular/core';
 import type { DayStatsDto } from '@pomodoro/shared';
-import { environment } from '../environments/environment';
-import { SessionsApi } from './sessions.api';
+import { environment } from '../../../environments/environment';
+import { SessionsApi } from '../../core/sessions.api';
 
 const DAYS = 7;
 
 @Component({
   selector: 'app-stats',
-  template: `
-    @if (stats.error()) {
-      <p class="message" role="alert">Statistics are unavailable. The timer keeps working.</p>
-      <button type="button" class="button" (click)="stats.reload()">Try again</button>
-    } @else if (stats.hasValue()) {
-      <dl class="totals">
-        <div>
-          <dt>Sessions</dt>
-          <dd>{{ totals().sessions }}</dd>
-        </div>
-        <div>
-          <dt>Focus minutes</dt>
-          <dd>{{ totals().focusMinutes }}</dd>
-        </div>
-      </dl>
-      <table>
-        <caption>
-          Focus time per day
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col">Day</th>
-            <th scope="col" class="number">Sessions</th>
-            <th scope="col" class="number">Minutes</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (day of stats.value(); track day.date) {
-            <tr>
-              <td>{{ dayLabel(day.date) }}</td>
-              <td class="number">{{ day.sessions }}</td>
-              <td class="number">{{ day.focusMinutes }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    } @else if (stats.isLoading()) {
-      <p class="message" role="status">Loading statistics…</p>
-    }
-  `,
+  templateUrl: './stats.component.html',
   styleUrl: './stats.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
