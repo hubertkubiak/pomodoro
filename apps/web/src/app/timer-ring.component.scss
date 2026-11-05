@@ -1,0 +1,58 @@
+:host {
+  position: relative;
+  display: block;
+  width: min(100%, 20rem);
+  aspect-ratio: 1;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+circle {
+  fill: none;
+  stroke-width: 8;
+}
+
+.track {
+  stroke: var(--color-track);
+}
+
+.progress {
+  stroke: var(--phase-color);
+  stroke-dasharray: 1;
+  transition:
+    stroke-dashoffset 250ms linear,
+    stroke 200ms ease;
+}
+
+.label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.time {
+  font-size: clamp(3rem, 16vw, 4.25rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.phase {
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress {
+    transition: none;
+  }
+}
