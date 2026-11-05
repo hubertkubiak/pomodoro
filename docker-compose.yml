@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - pomodoro-data:/data
+    restart: unless-stopped
+
+volumes:
+  pomodoro-data:

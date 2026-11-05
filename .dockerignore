@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/data
+**/.angular
+**/coverage
+.git
+.claude
+apps/web/src
+apps/web/public
+*.md
