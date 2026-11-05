@@ -184,13 +184,19 @@ pomodoro/
   apps/
     web/                 Angular 22
       src/app/
-        pomodoro.store.ts
-        pomodoro.store.spec.ts
-        timer-ring.component.ts
-        controls.component.ts
-        settings.component.ts
-        stats.component.ts
-        sessions.api.ts
+        app.component.ts, .html, .scss
+        app.config.ts
+        core/
+          pomodoro.store.ts
+          pomodoro.store.spec.ts
+          sessions.api.ts
+          settings.store.ts
+          settings.schema.ts
+        components/      One folder per component, each with .ts, .html and .scss files
+          timer-ring/
+          controls/
+          settings/
+          stats/
     api/                 Node + Fastify
       src/
         app.ts
@@ -200,6 +206,8 @@ pomodoro/
         repo/sessions.repo.ts
       test/app.spec.ts
   shared/types.ts        DTOs shared by both
+  .github/workflows/     Deployment of the web app to GitHub Pages
+  render.yaml            Deployment of the API to Render
   package.json           npm workspaces
   README.md
 ```
