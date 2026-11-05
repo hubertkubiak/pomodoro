@@ -4,9 +4,9 @@ Nov 5, 2026 · @Hubert
 
 ## Project goal
 
-A small Pomodoro timer that can be reviewed in a few minutes and that shows the strongest points of my CV: modern Angular, state-driven UI and a first step towards full-stack.
+A small Pomodoro timer.
 
-| CV skill | Where it shows in the project |
+| Skill | Where it shows in the project |
 | --- | --- |
 | Angular 22, standalone, zoneless | The whole app, with no zone.js and no NgModule |
 | Signals, `computed`, `effect` | Timer store, derived time and progress, tab title |
