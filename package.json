@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "description": "A small Pomodoro timer: zoneless Angular 22 frontend and a Fastify + SQLite API.",
-  "license": "MIT",
   "engines": {
     "node": ">=22"
   },
@@ -13,7 +12,7 @@
     "shared"
   ],
   "scripts": {
-    "dev": "concurrently --names api,web --prefix-colors red,cyan --kill-others-on-fail \"npm run dev --workspace=apps/api --if-present\" \"npm start --workspace=apps/web\"",
+    "dev": "concurrently --names api,web --prefix-colors red,cyan --kill-others-on-fail \"npm run dev --workspace=apps/api\" \"npm start --workspace=apps/web\"",
     "build": "npm run build --workspaces --if-present",
     "test": "npm test --workspaces --if-present"
   },
