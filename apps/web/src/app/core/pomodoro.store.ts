@@ -63,6 +63,7 @@ export class PomodoroStore {
   });
   private readonly now = signal(this.clock());
   private interval: ReturnType<typeof setInterval> | undefined;
+  private midnightTimer: ReturnType<typeof setTimeout> | undefined;
   private countedDay = localDay(this.clock());
 
   readonly status = computed(() => this.state().status);
@@ -105,15 +106,20 @@ export class PomodoroStore {
   constructor() {
     const title = inject(Title);
     effect(() => title.setTitle(`${this.display()} · ${this.phaseLabel()}`));
-    inject(DestroyRef).onDestroy(() => this.stopTicking());
+    this.scheduleDayCheck();
+    inject(DestroyRef).onDestroy(() => {
+      this.stopTicking();
+      clearTimeout(this.midnightTimer);
+    });
   }
 
   start(): void {
     if (this.status() !== 'idle') {
       return;
     }
+    this.syncDay();
     const durationMs = this.phaseMs(this.phase());
-    this.run(durationMs, { durationMs, completedFocus: this.todayCount() });
+    this.run(durationMs, { durationMs });
   }
 
   pause(): void {
@@ -138,15 +144,17 @@ export class PomodoroStore {
   }
 
   skip(): void {
+    this.syncDay();
     this.toIdle(this.nextPhase());
   }
 
   /** Time ran out. The only transition that counts a focus session and records it. */
   private complete(): void {
+    this.syncDay();
     const { phase, durationMs, endsAt } = this.state();
     const nextPhase = this.nextPhase();
     if (phase === 'focus') {
-      const completedFocus = this.todayCount() + 1;
+      const completedFocus = this.completedFocus() + 1;
       this.patch({ completedFocus });
       writeTodayCount(this.countedDay, completedFocus);
       void this.sessionsApi.save({
@@ -184,14 +192,23 @@ export class PomodoroStore {
     return this.settings()[PHASE_MINUTES[phase]] * 60_000;
   }
 
-  /** The completed sessions counter, restarted when a new day has begun. */
-  private todayCount(): number {
+  /** Restarts the completed sessions counter when a new day has begun. */
+  private syncDay(): void {
     const today = localDay(this.clock());
-    if (today === this.countedDay) {
-      return this.completedFocus();
+    if (today !== this.countedDay) {
+      this.countedDay = today;
+      this.patch({ completedFocus: 0 });
     }
-    this.countedDay = today;
-    return 0;
+  }
+
+  /** Clears the counter at local midnight, also while the timer stays idle. */
+  private scheduleDayCheck(): void {
+    const now = new Date(this.clock());
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    this.midnightTimer = setTimeout(() => {
+      this.syncDay();
+      this.scheduleDayCheck();
+    }, midnight - now.getTime());
   }
 
   private patch(changes: Partial<TimerState>): void {

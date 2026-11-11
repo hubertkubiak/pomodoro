@@ -239,5 +239,23 @@ describe('PomodoroStore', () => {
       completePhase();
       expect(store.completedFocus()).toBe(1);
     });
+
+    it('restarts at midnight while the timer stays idle', () => {
+      completePhase();
+      store.skip();
+      expect(store.completedFocus()).toBe(1);
+      advance(12 * 60 * MINUTE);
+      expect(store.completedFocus()).toBe(0);
+    });
+
+    it('skip() on a new day picks the next phase from the restarted counter', () => {
+      for (let i = 0; i < 3; i++) {
+        completePhase();
+        store.skip();
+      }
+      time += 24 * 60 * MINUTE; // The tab slept through midnight, so no timer fired.
+      store.skip();
+      expect(store.phase()).toBe('shortBreak');
+    });
   });
 });
