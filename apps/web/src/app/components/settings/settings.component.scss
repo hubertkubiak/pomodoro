@@ -20,7 +20,7 @@ label {
   font-weight: 600;
 }
 
-input {
+input[type='number'] {
   width: 100%;
   min-height: 2.75rem;
   padding: 0.5rem 0.75rem;
@@ -32,6 +32,24 @@ input {
 
   &[aria-invalid='true'] {
     border-color: var(--color-error);
+  }
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  input {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0;
+    accent-color: var(--phase-color, var(--color-focus));
   }
 }
 

@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
+import { Chime } from './chime';
 import { CLOCK, PomodoroStore, TODAY_COUNT_KEY } from './pomodoro.store';
 import { SessionsApi } from './sessions.api';
 import { DEFAULT_SETTINGS, SettingsStore } from './settings.store';
@@ -11,6 +12,7 @@ describe('PomodoroStore', () => {
   let time: number;
   let store: PomodoroStore;
   let save: jest.Mock;
+  let chime: { unlock: jest.Mock; play: jest.Mock };
 
   /** Moves the injected clock and the fake timers together. */
   const advance = (ms: number) => {
@@ -34,6 +36,7 @@ describe('PomodoroStore', () => {
       providers: [
         { provide: CLOCK, useValue: () => time },
         { provide: SessionsApi, useValue: { save } },
+        { provide: Chime, useValue: chime },
       ],
     });
     store = TestBed.inject(PomodoroStore);
@@ -46,6 +49,7 @@ describe('PomodoroStore', () => {
     localStorage.clear();
     time = START;
     save = jest.fn();
+    chime = { unlock: jest.fn(), play: jest.fn() };
     setup();
   });
 
@@ -189,6 +193,24 @@ describe('PomodoroStore', () => {
     advance(24 * MINUTE);
     expect(save).toHaveBeenCalledWith(expect.objectContaining({ durationSec: 25 * 60 }));
     expect(store.display()).toBe('10:00');
+  });
+
+  describe('the sound at the end of a phase', () => {
+    it('prepares audio on start and plays when the time runs out', () => {
+      store.start();
+      expect(chime.unlock).toHaveBeenCalled();
+      expect(chime.play).not.toHaveBeenCalled();
+      advance(store.remainingMs());
+      expect(chime.play).toHaveBeenCalledTimes(1);
+    });
+
+    it('stays silent on skip() and when turned off in the settings', () => {
+      store.start();
+      store.skip();
+      TestBed.inject(SettingsStore).update({ ...DEFAULT_SETTINGS, sound: false });
+      completePhase();
+      expect(chime.play).not.toHaveBeenCalled();
+    });
   });
 
   it('runs the interval only while running', () => {

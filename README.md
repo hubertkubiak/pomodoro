@@ -19,6 +19,7 @@
 - ⌨️ **Keyboard shortcuts**: <kbd>Space</kbd> starts, pauses and resumes, <kbd>R</kbd> resets, <kbd>S</kbd> skips
 - ⭕ **SVG progress ring** and the remaining time in the browser tab title, e.g. `12:34 · Focus`
 - ⚙️ **Validated settings** that survive a page refresh and apply from the next phase
+- 🔔 **A short chime** when a phase ends, generated with the Web Audio API and easy to turn off
 - 📊 **Statistics for the last 7 days**, grouped by day in your own time zone
 - 🔌 **Works without the backend**: sessions that could not be saved are queued and sent later
 - 🌙 **Dark mode** that follows the system setting

@@ -36,7 +36,7 @@ The MVP is a single screen: timer, control buttons, settings and daily statistic
 **Out of scope**
 
 - Login and user accounts (JWT as a possible stage 2).
-- System notifications and sounds (possibly one simple sound at the end of a phase).
+- System notifications. The only sound is a short chime at the end of a phase, generated with the Web Audio API.
 - A task list assigned to sessions.
 - Synchronisation between devices.
 - Running the timer with the tab closed (Service Worker).
@@ -88,7 +88,7 @@ All the logic lives in a single signal-based store. Components are thin: they re
 
 **Settings (Signal Forms)**
 
-- Model: `focusMin` (1–90), `shortBreakMin` (1–30), `longBreakMin` (1–60), `sessionsUntilLong` (2–8).
+- Model: `focusMin` (1–90), `shortBreakMin` (1–30), `longBreakMin` (1–60), `sessionsUntilLong` (2–8), `sound` (on by default).
 - Field validators: required, integer, range.
 - Cross-field validation: short break < long break < focus session.
 - Changing settings during a phase does not change the current countdown; the change applies from the next phase.

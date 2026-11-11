@@ -87,6 +87,7 @@ describe('settings', () => {
       shortBreakMin: 10,
       longBreakMin: 30,
       sessionsUntilLong: 3,
+      sound: false,
     };
 
     it('saves changes to localStorage and reads them back after a reload', () => {
@@ -98,8 +99,15 @@ describe('settings', () => {
       expect(TestBed.inject(SettingsStore).settings()).toEqual(custom);
     });
 
+    it('reads settings saved before the sound option existed, with the sound on', () => {
+      const { sound: _, ...legacy } = custom;
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(legacy));
+      expect(TestBed.inject(SettingsStore).settings()).toEqual({ ...custom, sound: true });
+    });
+
     it.each([
       ['corrupted JSON', '{oops'],
+      ['a sound value that is not a boolean', JSON.stringify({ ...custom, sound: 'yes' })],
       ['out-of-range values', JSON.stringify({ ...custom, focusMin: 500 })],
       ['values that break the cross-field rules', JSON.stringify({ ...custom, longBreakMin: 5 })],
       ['missing values', JSON.stringify({ focusMin: 50 })],

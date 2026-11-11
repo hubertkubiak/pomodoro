@@ -8,8 +8,9 @@ import {
   signal,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { Chime } from './chime';
 import { SessionsApi } from './sessions.api';
-import { PomodoroSettings, SettingsStore } from './settings.store';
+import { NumericSetting, SettingsStore } from './settings.store';
 
 export type TimerStatus = 'idle' | 'running' | 'paused';
 export type TimerPhase = 'focus' | 'shortBreak' | 'longBreak';
@@ -41,7 +42,7 @@ const PHASE_LABELS: Record<TimerPhase, string> = {
   longBreak: 'Long break',
 };
 
-const PHASE_MINUTES: Record<TimerPhase, keyof PomodoroSettings> = {
+const PHASE_MINUTES: Record<TimerPhase, NumericSetting> = {
   focus: 'focusMin',
   shortBreak: 'shortBreakMin',
   longBreak: 'longBreakMin',
@@ -52,6 +53,7 @@ export class PomodoroStore {
   private readonly clock = inject(CLOCK);
   private readonly settings = inject(SettingsStore).settings;
   private readonly sessionsApi = inject(SessionsApi);
+  private readonly chime = inject(Chime);
 
   private readonly state = signal<TimerState>({
     status: 'idle',
@@ -151,6 +153,9 @@ export class PomodoroStore {
   /** Time ran out. The only transition that counts a focus session and records it. */
   private complete(): void {
     this.syncDay();
+    if (this.settings().sound) {
+      this.chime.play();
+    }
     const { phase, durationMs, endsAt } = this.state();
     const nextPhase = this.nextPhase();
     if (phase === 'focus') {
@@ -166,6 +171,7 @@ export class PomodoroStore {
   }
 
   private run(remainingMs: number, changes: Partial<TimerState> = {}): void {
+    this.chime.unlock();
     this.now.set(this.clock());
     this.patch({ ...changes, status: 'running', endsAt: this.clock() + remainingMs });
     this.interval = setInterval(() => this.tick(), TICK_MS);

@@ -5,6 +5,8 @@ export interface PomodoroSettings {
   shortBreakMin: number;
   longBreakMin: number;
   sessionsUntilLong: number;
+  /** Play a sound when a phase ends. */
+  sound: boolean;
 }
 
 export const DEFAULT_SETTINGS: PomodoroSettings = {
@@ -12,10 +14,13 @@ export const DEFAULT_SETTINGS: PomodoroSettings = {
   shortBreakMin: 5,
   longBreakMin: 15,
   sessionsUntilLong: 4,
+  sound: true,
 };
 
 /** Allowed range of every setting: the single source for the form and for reading saved data. */
-export const SETTINGS_RANGES: Record<keyof PomodoroSettings, { min: number; max: number }> = {
+export type NumericSetting = Exclude<keyof PomodoroSettings, 'sound'>;
+
+export const SETTINGS_RANGES: Record<NumericSetting, { min: number; max: number }> = {
   focusMin: { min: 1, max: 90 },
   shortBreakMin: { min: 1, max: 30 },
   longBreakMin: { min: 1, max: 60 },
@@ -25,20 +30,25 @@ export const SETTINGS_RANGES: Record<keyof PomodoroSettings, { min: number; max:
 export const SETTINGS_STORAGE_KEY = 'pomodoro.settings';
 
 function isValid(value: Partial<PomodoroSettings>): value is PomodoroSettings {
-  const inRange = (Object.keys(SETTINGS_RANGES) as (keyof PomodoroSettings)[]).every((key) => {
+  const inRange = (Object.keys(SETTINGS_RANGES) as NumericSetting[]).every((key) => {
     const field = value[key];
     const { min, max } = SETTINGS_RANGES[key];
     return Number.isInteger(field) && field! >= min && field! <= max;
   });
   return (
-    inRange && value.shortBreakMin! < value.longBreakMin! && value.longBreakMin! < value.focusMin!
+    inRange &&
+    value.shortBreakMin! < value.longBreakMin! &&
+    value.longBreakMin! < value.focusMin! &&
+    typeof value.sound === 'boolean'
   );
 }
 
 function loadSettings(): PomodoroSettings {
   try {
     const saved = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) ?? 'null');
-    return saved && isValid(saved) ? saved : DEFAULT_SETTINGS;
+    // Settings saved before the sound option existed keep working, with the sound on.
+    const settings = saved && { sound: DEFAULT_SETTINGS.sound, ...saved };
+    return settings && isValid(settings) ? settings : DEFAULT_SETTINGS;
   } catch {
     return DEFAULT_SETTINGS;
   }

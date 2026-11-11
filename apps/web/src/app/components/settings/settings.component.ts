@@ -14,7 +14,7 @@ export class SettingsComponent {
   private readonly store = inject(SettingsStore);
 
   private readonly model = signal<PomodoroSettings>(this.store.settings());
-  private readonly form = form(this.model, settingsSchema);
+  protected readonly form = form(this.model, settingsSchema);
 
   protected readonly fields = [
     { id: 'focus-min', label: 'Focus session (min)', field: this.form.focusMin },

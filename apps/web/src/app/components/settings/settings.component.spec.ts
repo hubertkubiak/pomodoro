@@ -38,6 +38,15 @@ describe('SettingsComponent', () => {
     expect(element().textContent).toContain('Saved.');
   });
 
+  it('turns the sound off', async () => {
+    element().querySelector<HTMLInputElement>('input[type=checkbox]')!.click();
+    await fixture.whenStable();
+    saveButton().click();
+    await fixture.whenStable();
+
+    expect(TestBed.inject(SettingsStore).settings().sound).toBe(false);
+  });
+
   it('shows the error and keeps Save disabled for invalid values', async () => {
     await type('long-break-min', '3');
 
