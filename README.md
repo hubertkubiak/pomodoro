@@ -16,6 +16,7 @@
 
 - ⏱️ **Focus, short break and long break** phases, with a long break after every N focus sessions
 - 🎛️ **Start, Pause, Resume, Reset and Skip**, shown according to the timer state
+- ⌨️ **Keyboard shortcuts**: <kbd>Space</kbd> starts, pauses and resumes, <kbd>R</kbd> resets, <kbd>S</kbd> skips
 - ⭕ **SVG progress ring** and the remaining time in the browser tab title, e.g. `12:34 · Focus`
 - ⚙️ **Validated settings** that survive a page refresh and apply from the next phase
 - 📊 **Statistics for the last 7 days**, grouped by day in your own time zone

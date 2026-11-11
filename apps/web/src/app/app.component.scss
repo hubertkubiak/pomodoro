@@ -45,6 +45,27 @@
   color: var(--color-muted);
 }
 
+.shortcuts {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+
+  kbd {
+    padding: 0.0625rem 0.375rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    background: var(--color-bg);
+    font: inherit;
+    font-weight: 600;
+  }
+}
+
+@media (hover: none) {
+  .shortcuts {
+    display: none;
+  }
+}
+
 .today {
   margin: 0;
   color: var(--color-muted);
