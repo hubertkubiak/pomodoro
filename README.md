@@ -52,6 +52,7 @@ Open <http://localhost:4200>. The command starts the web app and the API (port 3
 | `npm run dev` | Starts both projects in parallel |
 | `npm test` | Runs the tests of both projects |
 | `npm run build` | Builds both projects |
+| `npm run format` | Formats the code with Prettier (`format:check` only checks it) |
 | `docker compose up --build` | Runs only the API in Docker, with the database in a named volume |
 
 The API reads these environment variables:
@@ -136,7 +137,7 @@ pomodoro/
 │       ├── src/repo/       SQL
 │       └── test/           API tests
 ├── shared/types.ts         DTOs used by both projects
-├── .github/workflows/      Deployment of the web app to GitHub Pages
+├── .github/workflows/      CI for pull requests, deployment of the web app to GitHub Pages
 ├── render.yaml             Deployment of the API to Render
 ├── docker-compose.yml
 └── SPEC.md                 Full specification

@@ -14,9 +14,12 @@
   "scripts": {
     "dev": "concurrently --names api,web --prefix-colors red,cyan --kill-others-on-fail \"npm run dev --workspace=apps/api\" \"npm start --workspace=apps/web\"",
     "build": "npm run build --workspaces --if-present",
-    "test": "npm test --workspaces --if-present"
+    "test": "npm test --workspaces --if-present",
+    "format": "prettier --write \"apps/*/src/**/*.{ts,html,scss}\" \"apps/*/test/**/*.ts\" \"shared/**/*.ts\"",
+    "format:check": "prettier --check \"apps/*/src/**/*.{ts,html,scss}\" \"apps/*/test/**/*.ts\" \"shared/**/*.ts\""
   },
   "devDependencies": {
-    "concurrently": "^10.0.6"
+    "concurrently": "^10.0.6",
+    "prettier": "^3.8.1"
   }
 }
