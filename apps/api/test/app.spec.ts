@@ -49,6 +49,17 @@ describe('API', () => {
       expect(res.statusCode).toBe(400);
     });
 
+    it('returns 400 when completedAt is in the future', async () => {
+      const res = await postSession(1500, '2026-11-05T12:10:00Z');
+      expect(res.statusCode).toBe(400);
+      expect(res.json()).toEqual({ error: expect.any(String) });
+    });
+
+    it('accepts a completedAt slightly ahead of the server clock', async () => {
+      const res = await postSession(1500, '2026-11-05T12:02:00Z');
+      expect(res.statusCode).toBe(201);
+    });
+
     it('returns 400 in the common error format for malformed JSON', async () => {
       const res = await app.inject({
         method: 'POST',

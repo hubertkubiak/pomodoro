@@ -48,7 +48,7 @@ export async function buildApp({
   );
 
   app.get('/api/health', async () => ({ status: 'ok' }));
-  sessionsRoutes(app, repo);
+  sessionsRoutes(app, repo, now);
   statsRoutes(app, repo, now);
 
   return app;

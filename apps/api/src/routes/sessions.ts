@@ -1,4 +1,4 @@
-import type { CreateSessionDto, SessionDto } from '@pomodoro/shared';
+import type { CreateSessionDto, ErrorDto, SessionDto } from '@pomodoro/shared';
 import type { FastifyInstance } from 'fastify';
 import { isValidTimeZone, localDateFormatter, utcRangeAround } from '../dates';
 import type { SessionsRepo } from '../repo/sessions.repo';
@@ -15,6 +15,9 @@ const createSessionSchema = {
   },
 };
 
+/** Tolerance for a client clock that runs slightly ahead of the server. */
+const MAX_CLOCK_SKEW_MS = 5 * 60 * 1000;
+
 const listSessionsSchema = {
   querystring: {
     type: 'object',
@@ -26,11 +29,16 @@ const listSessionsSchema = {
   },
 };
 
-export function sessionsRoutes(app: FastifyInstance, repo: SessionsRepo): void {
-  app.post<{ Body: CreateSessionDto; Reply: SessionDto }>(
+export function sessionsRoutes(app: FastifyInstance, repo: SessionsRepo, now: () => Date): void {
+  app.post<{ Body: CreateSessionDto; Reply: SessionDto | ErrorDto }>(
     '/api/sessions',
     { schema: createSessionSchema },
-    async (request, reply) => reply.code(201).send(repo.insert(request.body)),
+    async (request, reply) => {
+      if (Date.parse(request.body.completedAt) > now().getTime() + MAX_CLOCK_SKEW_MS) {
+        return reply.code(400).send({ error: 'completedAt must not be in the future' });
+      }
+      return reply.code(201).send(repo.insert(request.body));
+    },
   );
 
   app.get<{ Querystring: { date: string; tz: string } }>(
