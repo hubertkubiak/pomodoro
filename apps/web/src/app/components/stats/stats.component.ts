@@ -13,6 +13,14 @@ import { SessionsApi } from '../../core/sessions.api';
 
 const DAYS = 7;
 
+/** `date` is already a day in the user's zone, so it is formatted in UTC, without shifting it again. */
+const DAY_FORMAT = new Intl.DateTimeFormat('en-GB', {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+});
+
 @Component({
   selector: 'app-stats',
   templateUrl: './stats.component.html',
@@ -38,6 +46,11 @@ export class StatsComponent {
     );
   });
 
+  /** The busiest day, which sets the full width of the bars. */
+  private readonly maxMinutes = computed(() =>
+    this.stats.hasValue() ? Math.max(0, ...this.stats.value().map((day) => day.focusMinutes)) : 0,
+  );
+
   constructor() {
     // Sessions saved before this panel opened are already in the first response.
     let seenCount = this.sessionsApi.savedCount();
@@ -51,12 +64,12 @@ export class StatsComponent {
   }
 
   protected dayLabel(date: string): string {
-    // `date` is already a day in the user's zone, so format it as is, without shifting it again.
-    return new Intl.DateTimeFormat('en-GB', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-      timeZone: 'UTC',
-    }).format(new Date(`${date}T12:00:00Z`));
+    return DAY_FORMAT.format(new Date(`${date}T12:00:00Z`));
+  }
+
+  /** Width of the bar of a day, as a percentage of the busiest day. */
+  protected barWidth(focusMinutes: number): number {
+    const max = this.maxMinutes();
+    return max === 0 ? 0 : (focusMinutes / max) * 100;
   }
 }

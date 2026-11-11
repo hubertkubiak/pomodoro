@@ -24,11 +24,24 @@
       </tr>
     </thead>
     <tbody>
-      @for (day of stats.value(); track day.date) {
-        <tr>
-          <td>{{ dayLabel(day.date) }}</td>
+      <!-- The API returns the days in order, ending with today. -->
+      @for (day of stats.value(); track day.date; let isToday = $last) {
+        <tr [class.today]="isToday" [attr.aria-current]="isToday ? 'date' : null">
+          <td>
+            {{ dayLabel(day.date) }}
+            @if (isToday) {
+              <span class="badge">Today</span>
+            }
+          </td>
           <td class="number">{{ day.sessions }}</td>
-          <td class="number">{{ day.focusMinutes }}</td>
+          <td class="number">
+            <span class="minutes">
+              <span class="bar" aria-hidden="true">
+                <span class="bar-fill" [style.width.%]="barWidth(day.focusMinutes)"></span>
+              </span>
+              {{ day.focusMinutes }}
+            </span>
+          </td>
         </tr>
       }
     </tbody>

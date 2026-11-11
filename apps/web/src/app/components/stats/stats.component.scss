@@ -62,3 +62,39 @@ tr:last-child td {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
+
+.today td {
+  font-weight: 600;
+}
+
+.badge {
+  margin-left: 0.375rem;
+  padding: 0 0.375rem;
+  border-radius: 0.375rem;
+  background: var(--phase-soft, var(--color-focus-soft));
+  color: var(--color-text);
+  font-size: 0.75rem;
+}
+
+.minutes {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.bar {
+  flex: 1;
+  max-width: 6rem;
+  height: 0.375rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-track);
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--phase-color, var(--color-focus));
+}

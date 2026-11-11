@@ -41,6 +41,19 @@ describe('StatsComponent', () => {
     expect(text()).toContain('5 Nov');
   });
 
+  it('marks today and scales the bars to the busiest day', async () => {
+    http.expectOne(isStatsRequest).flush(days);
+    await fixture.whenStable();
+
+    const rows = (fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr');
+    expect(rows[1].getAttribute('aria-current')).toBe('date');
+    expect(rows[1].textContent).toContain('Today');
+    expect(rows[0].getAttribute('aria-current')).toBeNull();
+
+    const widths = [...rows].map((row) => row.querySelector<HTMLElement>('.bar-fill')!.style.width);
+    expect(widths).toEqual(['50%', '100%']);
+  });
+
   it('shows an error when the backend is down', async () => {
     http.expectOne(isStatsRequest).flush('', { status: 503, statusText: 'Service Unavailable' });
     await fixture.whenStable();
