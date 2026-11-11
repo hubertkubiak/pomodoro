@@ -30,7 +30,9 @@ function isValid(value: Partial<PomodoroSettings>): value is PomodoroSettings {
     const { min, max } = SETTINGS_RANGES[key];
     return Number.isInteger(field) && field! >= min && field! <= max;
   });
-  return inRange && value.shortBreakMin! < value.longBreakMin! && value.longBreakMin! < value.focusMin!;
+  return (
+    inRange && value.shortBreakMin! < value.longBreakMin! && value.longBreakMin! < value.focusMin!
+  );
 }
 
 function loadSettings(): PomodoroSettings {

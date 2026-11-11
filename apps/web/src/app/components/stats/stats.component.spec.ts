@@ -31,9 +31,7 @@ describe('StatsComponent', () => {
   it('requests 7 days in the time zone of the user and shows totals', async () => {
     const request = http.expectOne(isStatsRequest);
     expect(request.request.params.get('days')).toBe('7');
-    expect(request.request.params.get('tz')).toBe(
-      Intl.DateTimeFormat().resolvedOptions().timeZone,
-    );
+    expect(request.request.params.get('tz')).toBe(Intl.DateTimeFormat().resolvedOptions().timeZone);
     expect(text()).toContain('Loading');
 
     request.flush(days);

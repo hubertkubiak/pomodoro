@@ -1,13 +1,9 @@
 @switch (status()) {
   @case ('idle') {
-    <button type="button" class="button button--primary" (click)="startTimer.emit()">
-      Start
-    </button>
+    <button type="button" class="button button--primary" (click)="startTimer.emit()">Start</button>
   }
   @case ('running') {
-    <button type="button" class="button button--primary" (click)="pauseTimer.emit()">
-      Pause
-    </button>
+    <button type="button" class="button button--primary" (click)="pauseTimer.emit()">Pause</button>
   }
   @case ('paused') {
     <button type="button" class="button button--primary" (click)="resumeTimer.emit()">

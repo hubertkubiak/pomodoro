@@ -20,7 +20,11 @@ export class SettingsComponent {
     { id: 'focus-min', label: 'Focus session (min)', field: this.form.focusMin },
     { id: 'short-break-min', label: 'Short break (min)', field: this.form.shortBreakMin },
     { id: 'long-break-min', label: 'Long break (min)', field: this.form.longBreakMin },
-    { id: 'sessions-until-long', label: 'Sessions until long break', field: this.form.sessionsUntilLong },
+    {
+      id: 'sessions-until-long',
+      label: 'Sessions until long break',
+      field: this.form.sessionsUntilLong,
+    },
   ];
 
   private readonly isUnchanged = computed(() => {

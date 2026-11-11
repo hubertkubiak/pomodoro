@@ -40,23 +40,43 @@ describe('settings', () => {
 
     it('rejects fractions', () => {
       const settings = validate({ focusMin: 25.5 });
-      expect(settings.focusMin().errors().map((e) => e.kind)).toEqual(['integer']);
+      expect(
+        settings
+          .focusMin()
+          .errors()
+          .map((e) => e.kind),
+      ).toEqual(['integer']);
     });
 
     it('rejects an empty field', () => {
       const settings = validate({ focusMin: null as unknown as number });
-      expect(settings.focusMin().errors().map((e) => e.kind)).toEqual(['required']);
+      expect(
+        settings
+          .focusMin()
+          .errors()
+          .map((e) => e.kind),
+      ).toEqual(['required']);
     });
 
     it('requires the short break to be shorter than the long break', () => {
       const settings = validate({ shortBreakMin: 15, longBreakMin: 15 });
-      expect(settings.longBreakMin().errors().map((e) => e.kind)).toEqual(['longNotAboveShort']);
+      expect(
+        settings
+          .longBreakMin()
+          .errors()
+          .map((e) => e.kind),
+      ).toEqual(['longNotAboveShort']);
       expect(settings().valid()).toBe(false);
     });
 
     it('requires the long break to be shorter than the focus session', () => {
       const settings = validate({ focusMin: 15, longBreakMin: 20 });
-      expect(settings.longBreakMin().errors().map((e) => e.kind)).toEqual(['longNotBelowFocus']);
+      expect(
+        settings
+          .longBreakMin()
+          .errors()
+          .map((e) => e.kind),
+      ).toEqual(['longNotBelowFocus']);
       expect(settings().valid()).toBe(false);
     });
   });

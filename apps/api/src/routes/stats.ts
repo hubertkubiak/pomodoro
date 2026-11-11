@@ -42,13 +42,11 @@ export function statsRoutes(app: FastifyInstance, repo: SessionsRepo, now: () =>
         }
       }
 
-      return [...stats].map(
-        ([date, { sessions, seconds }]): DayStatsDto => ({
-          date,
-          sessions,
-          focusMinutes: Math.round(seconds / 60),
-        }),
-      );
+      return [...stats].map(([date, { sessions, seconds }]): DayStatsDto => ({
+        date,
+        sessions,
+        focusMinutes: Math.round(seconds / 60),
+      }));
     },
   );
 }

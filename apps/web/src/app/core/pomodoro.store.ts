@@ -1,4 +1,12 @@
-import { computed, DestroyRef, effect, inject, Injectable, InjectionToken, signal } from '@angular/core';
+import {
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  Injectable,
+  InjectionToken,
+  signal,
+} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { SessionsApi } from './sessions.api';
 import { PomodoroSettings, SettingsStore } from './settings.store';
