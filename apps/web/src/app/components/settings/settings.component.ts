@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { form, FormField, submit } from '@angular/forms/signals';
 import { settingsSchema } from '../../core/settings.schema';
-import { PomodoroSettings, SettingsStore } from '../../core/settings.store';
+import { DEFAULT_SETTINGS, PomodoroSettings, SettingsStore } from '../../core/settings.store';
 
 @Component({
   selector: 'app-settings',
@@ -27,17 +27,17 @@ export class SettingsComponent {
     },
   ];
 
-  private readonly isUnchanged = computed(() => {
-    const draft = this.model();
-    const applied = this.store.settings();
-    return (Object.keys(applied) as (keyof PomodoroSettings)[]).every(
-      (key) => draft[key] === applied[key],
-    );
-  });
+  private readonly isUnchanged = computed(() => sameSettings(this.model(), this.store.settings()));
   private readonly hasSaved = signal(false);
 
   protected readonly canSave = computed(() => this.form().valid() && !this.isUnchanged());
   protected readonly justSaved = computed(() => this.hasSaved() && this.isUnchanged());
+  protected readonly isDefault = computed(() => sameSettings(this.model(), DEFAULT_SETTINGS));
+
+  /** Fills the form with the defaults. They apply only after Save, like any other change. */
+  protected restoreDefaults(): void {
+    this.model.set(DEFAULT_SETTINGS);
+  }
 
   protected save(event: Event): void {
     event.preventDefault();
@@ -46,4 +46,8 @@ export class SettingsComponent {
       this.hasSaved.set(true);
     });
   }
+}
+
+function sameSettings(a: PomodoroSettings, b: PomodoroSettings): boolean {
+  return (Object.keys(b) as (keyof PomodoroSettings)[]).every((key) => a[key] === b[key]);
 }

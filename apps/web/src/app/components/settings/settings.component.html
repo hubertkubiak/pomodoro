@@ -26,6 +26,9 @@
   </label>
   <div class="actions">
     <button type="submit" class="button" [disabled]="!canSave()">Save</button>
+    <button type="button" class="button" [disabled]="isDefault()" (click)="restoreDefaults()">
+      Restore defaults
+    </button>
     <p class="hint" role="status">
       {{ justSaved() ? 'Saved.' : 'Changes apply from the next phase.' }}
     </p>

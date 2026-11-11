@@ -47,6 +47,26 @@ describe('SettingsComponent', () => {
     expect(TestBed.inject(SettingsStore).settings().sound).toBe(false);
   });
 
+  it('fills the form with the defaults, which apply on Save', async () => {
+    const restore = () =>
+      [...element().querySelectorAll('button')].find((b) => b.textContent!.includes('Restore'))!;
+    expect(restore().disabled).toBe(true);
+
+    await type('focus-min', '50');
+    saveButton().click();
+    await fixture.whenStable();
+    expect(restore().disabled).toBe(false);
+
+    restore().click();
+    await fixture.whenStable();
+    expect(element().querySelector<HTMLInputElement>('#focus-min')!.value).toBe('25');
+    expect(TestBed.inject(SettingsStore).settings().focusMin).toBe(50);
+
+    saveButton().click();
+    await fixture.whenStable();
+    expect(TestBed.inject(SettingsStore).settings()).toEqual(DEFAULT_SETTINGS);
+  });
+
   it('shows the error and keeps Save disabled for invalid values', async () => {
     await type('long-break-min', '3');
 
